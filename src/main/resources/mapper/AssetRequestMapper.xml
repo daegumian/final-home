@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ittam.web.asset_request.service.AssetRequestMapper">
+
+    <!--  전체 자산 목록  -->
+    <select id="AssetAllList">
+        SELECT
+            a.*,
+            pc.*,
+            sw.*,
+            etc.*,
+            sv.*,
+            c.name AS category_name
+        FROM ITASSETS a
+                 LEFT JOIN PCSPEC pc ON (a.assets_name LIKE '%노트북%' OR a.assets_name LIKE '%데스크탑%') AND a.spec_num = pc.spec_num
+                 LEFT JOIN SWSPEC sw ON (a.assets_name LIKE '%소프트웨어%') AND a.spec_num = sw.spec_num
+                 LEFT JOIN SERVERSPEC sv ON (a.assets_name LIKE '%서버%') AND a.spec_num = sv.spec_num
+                 LEFT JOIN ETCSPEC etc ON a.spec_num = etc.spec_num AND a.assets_name NOT LIKE '%노트북%' AND a.assets_name NOT LIKE '%데스크탑%' AND a.assets_name NOT LIKE '%서버%' AND a.assets_name NOT LIKE '%소프트웨어%'
+                 LEFT JOIN categories c ON a.CATEGORY_NUM = c.id;
+    </select>
+
+    <!-- 전체 자삭 목록 검색 -->
+    <select id="AssetRequestSearch" resultType="ITAssetsVO">
+        SELECT
+            a.*,
+            pc.*,
+            sw.*,
+            etc.*,
+            sv.*,
+            c.name AS category_name
+        FROM ITASSETS a
+                 LEFT JOIN PCSPEC pc ON (a.assets_name LIKE '%노트북%' OR a.assets_name LIKE '%데스크탑%') AND a.spec_num = pc.spec_num
+                 LEFT JOIN SWSPEC sw ON (a.assets_name LIKE '%Microsoft Office%' OR a.assets_name LIKE '%파워포인트%' OR a.assets_name LIKE '엑셀' OR a.assets_name LIKE '워드' OR a.assets_name LIKE '한글과컴퓨터' OR a.assets_name LIKE '인텔리제이' ) AND a.spec_num = sw.spec_num
+                 LEFT JOIN SERVERSPEC sv ON (a.assets_name LIKE '%서버용하드%') AND a.spec_num = sv.spec_num
+                 LEFT JOIN ETCSPEC etc ON a.spec_num = etc.spec_num AND a.assets_name NOT LIKE '%노트북%' AND a.assets_name NOT LIKE '%데스크탑%' AND a.assets_name NOT LIKE '%서버용하드%' AND a.assets_name NOT LIKE '%Microsoft Office%' AND a.assets_name NOT LIKE '%파워포인트%' AND a.assets_name NOT LIKE '%워드%' AND a.assets_name NOT LIKE '%워드%' AND a.assets_name NOT LIKE '%한글과컴퓨터%' AND a.assets_name NOT LIKE '%인텔리제이%'
+                 LEFT JOIN categories c ON a.CATEGORY_NUM = c.id
+        WHERE a.assets_name = #{inputText};
+    </select>
+
+    <!--    pc-->
+    <select id="AssetRequestListPC">
+        SELECT
+            a.*,
+            pc.*,
+            sw.*,
+            etc.*,
+            sv.*,
+            c.name AS category_name
+        FROM ITASSETS a
+                 LEFT JOIN PCSPEC pc ON a.spec_num = pc.spec_num
+                 LEFT JOIN SWSPEC sw ON a.spec_num = sw.spec_num
+                 LEFT JOIN SERVERSPEC sv ON a.spec_num = sv.spec_num
+                 LEFT JOIN ETCSPEC etc ON a.spec_num = etc.spec_num
+                 LEFT JOIN categories c ON a.CATEGORY_NUM = c.id
+        WHERE c.name IN ('데스크탑', '노트북');
+    </select>
+
+    <!--    sw-->
+    <select id="AssetRequestListSW">
+        SELECT
+            a.*,
+            pc.*,
+            sw.*,
+            etc.*,
+            sv.*,
+            c.name AS category_name
+        FROM ITASSETS a
+                 LEFT JOIN PCSPEC pc ON (a.assets_name LIKE '%노트북%' OR a.assets_name LIKE '%데스크탑%') AND a.spec_num = pc.spec_num
+                 LEFT JOIN SWSPEC sw ON (a.assets_name LIKE '%소프트웨어%') AND a.spec_num = sw.spec_num
+                 LEFT JOIN SERVERSPEC sv ON (a.assets_name LIKE '%서버%') AND a.spec_num = sv.spec_num
+                 LEFT JOIN ETCSPEC etc ON a.spec_num = etc.spec_num
+                 LEFT JOIN categories c ON a.CATEGORY_NUM = c.id
+        WHERE
+            c.name = '소프트웨어';
+    </select>
+    <!--    sv-->
+    <select id="AssetRequestListSV">
+        SELECT
+            a.*,
+            pc.*,
+            sw.*,
+            etc.*,
+            sv.*,
+            c.name AS category_name
+        FROM ITASSETS a
+                 LEFT JOIN PCSPEC pc ON (a.assets_name LIKE '%노트북%' OR a.assets_name LIKE '%데스크탑%') AND a.spec_num = pc.spec_num
+                 LEFT JOIN SWSPEC sw ON (a.assets_name LIKE '%소프트웨어%') AND a.spec_num = sw.spec_num
+                 LEFT JOIN SERVERSPEC sv ON (a.assets_name LIKE '%서버%') AND a.spec_num = sv.spec_num
+                 LEFT JOIN ETCSPEC etc ON a.spec_num = etc.spec_num
+                 LEFT JOIN categories c ON a.CATEGORY_NUM = c.id
+        WHERE
+            c.name = '서버';
+    </select>
+    <!--    etc-->
+    <select id="AssetRequestListETC">
+        SELECT
+            a.*,
+            pc.*,
+            sw.*,
+            etc.*,
+            sv.*,
+            c.name AS category_name
+        FROM ITASSETS a
+                 LEFT JOIN PCSPEC pc ON (a.assets_name LIKE '%노트북%' OR a.assets_name LIKE '%데스크탑%') AND a.spec_num = pc.spec_num
+                 LEFT JOIN SWSPEC sw ON (a.assets_name LIKE '%소프트웨어%') AND a.spec_num = sw.spec_num
+                 LEFT JOIN SERVERSPEC sv ON (a.assets_name LIKE '%서버%') AND a.spec_num = sv.spec_num
+                 LEFT JOIN ETCSPEC etc ON a.spec_num = etc.spec_num
+                 LEFT JOIN categories c ON a.CATEGORY_NUM = c.id
+        WHERE
+            a.assets_name NOT LIKE '%노트북%'
+          AND a.assets_name NOT LIKE '%데스크탑%'
+          AND a.assets_name NOT LIKE '%서버%'
+          AND a.assets_name NOT LIKE '%소프트웨어%';
+    </select>
+
+    <!---카테고리별 검색 -->
+
+    <!--    pc검색-->
+    <select id="AssetRequestSearchPC" resultType="ITAssetsVO">
+        SELECT
+            a.*,
+            pc.*,
+            sw.*,
+            etc.*,
+            sv.*,
+            c.name AS category_name
+        FROM ITASSETS a
+                 LEFT JOIN PCSPEC pc ON a.spec_num = pc.spec_num
+                 LEFT JOIN SWSPEC sw ON a.spec_num = sw.spec_num
+                 LEFT JOIN SERVERSPEC sv ON a.spec_num = sv.spec_num
+                 LEFT JOIN ETCSPEC etc ON a.spec_num = etc.spec_num
+                 LEFT JOIN categories c ON a.CATEGORY_NUM = c.id
+        WHERE
+        a.assets_name IN ('데스크탑', '노트북')AND a.assets_name IN (#{inputText});
+    </select>
+
+    <!--SW 검색-->
+    <select id="AssetRequestSearchSW" resultType="ITAssetsVO">
+        SELECT
+            a.*,
+            pc.*,
+            sw.*,
+            etc.*,
+            sv.*,
+            c.name AS category_name
+        FROM ITASSETS a
+                 LEFT JOIN PCSPEC pc ON a.spec_num = pc.spec_num
+                 LEFT JOIN SWSPEC sw ON a.spec_num = sw.spec_num
+                 LEFT JOIN SERVERSPEC sv ON a.spec_num = sv.spec_num
+                 LEFT JOIN ETCSPEC etc ON a.spec_num = etc.spec_num
+                 LEFT JOIN categories c ON a.CATEGORY_NUM = c.id
+        WHERE
+        a.assets_name IN ('소프트웨어')AND a.assets_name IN (#{inputText});
+    </select>
+
+    <!--SV 검색-->
+    <select id="AssetRequestSearchSV" resultType="ITAssetsVO">
+        SELECT
+            a.*,
+            pc.*,
+            sw.*,
+            etc.*,
+            sv.*,
+            c.name AS category_name
+        FROM ITASSETS a
+                 LEFT JOIN PCSPEC pc ON a.spec_num = pc.spec_num
+                 LEFT JOIN SWSPEC sw ON a.spec_num = sw.spec_num
+                 LEFT JOIN SERVERSPEC sv ON a.spec_num = sv.spec_num
+                 LEFT JOIN ETCSPEC etc ON a.spec_num = etc.spec_num
+                 LEFT JOIN categories c ON a.CATEGORY_NUM = c.id
+        WHERE
+        a.assets_name IN ('서버')AND a.assets_name IN (#{inputText});
+    </select>
+
+    <!--ETC 검색-->
+    <select id="AssetRequestSearchETC" resultType="ITAssetsVO">
+        SELECT
+            a.*,
+            pc.*,
+            sw.*,
+            etc.*,
+            sv.*,
+            c.name AS category_name
+        FROM ITASSETS a
+                 LEFT JOIN PCSPEC pc ON a.spec_num = pc.spec_num
+                 LEFT JOIN SWSPEC sw ON a.spec_num = sw.spec_num
+                 LEFT JOIN SERVERSPEC sv ON a.spec_num = sv.spec_num
+                 LEFT JOIN ETCSPEC etc ON a.spec_num = etc.spec_num
+                 LEFT JOIN categories c ON a.CATEGORY_NUM = c.id
+        WHERE
+            (a.assets_name LIKE '%inputText%'
+                OR a.assets_name LIKE '%노트북%'
+                OR a.assets_name LIKE '%데스크탑%'
+                OR a.assets_name LIKE '%서버%'
+                OR a.assets_name LIKE '%소프트웨어%')
+          AND a.assets_name IN ('%inputText%');
+
+    </select>
+
+
+</mapper>
